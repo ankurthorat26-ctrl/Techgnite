@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-ivory: #F7F0E8;
+    --color-burgundy: #7A263A;
+    --color-champagne: #D9B98C;
+    --color-espresso: #292521;
+    --color-white: #FFFFFF;
+    --color-muted: #6E675F;
+  }
+
+  body {
+    background-color: #F7F0E8;
+    color: #292521;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  }
+}
