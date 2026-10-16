@@ -279,42 +279,75 @@ export const PaletteDisplay: React.FC<PaletteDisplayProps> = ({
           </div>
         </div>
 
-        {/* Makeup Color-Family Suggestions */}
+        {/* Makeup / Grooming Color-Family Suggestions */}
         <div className="bg-[#FAF6F0] rounded-3xl p-6 border border-[#D9B98C]/40 space-y-3">
           <div className="flex items-center gap-2 text-[#7A263A]">
             <Sparkles className="w-5 h-5" />
             <h3 className="font-serif text-xl font-medium text-[#292521]">
-              Makeup Color Families
+              {genderPreference === 'men' ? 'Grooming & Undertone Harmony' : 'Makeup Color Families'}
             </h3>
           </div>
           <p className="text-xs text-[#6E675F] leading-relaxed">
-            {palette.makeupSuggestions.tips}
+            {genderPreference === 'men'
+              ? 'Tailored grooming harmonies designed to balance warm/cool facial undertones naturally without shine.'
+              : palette.makeupSuggestions.tips}
           </p>
           <div className="space-y-2 pt-1 text-xs">
-            <div>
-              <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
-                Lips:
-              </strong>
-              <span className="text-[#292521]/80">
-                {palette.makeupSuggestions.lipColors.join(' • ')}
-              </span>
-            </div>
-            <div>
-              <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
-                Blush:
-              </strong>
-              <span className="text-[#292521]/80">
-                {palette.makeupSuggestions.blushTones.join(' • ')}
-              </span>
-            </div>
-            <div>
-              <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
-                Eyeshadow:
-              </strong>
-              <span className="text-[#292521]/80">
-                {palette.makeupSuggestions.eyeShades.join(' • ')}
-              </span>
-            </div>
+            {genderPreference === 'men' ? (
+              <>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Lip Care & Balms:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    Spiced Cinnamon • Matte Sheen • Natural Ochre Tint
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Skin Tone Balancing:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    Undertone-matched matte concealer crayons for effortless spot & dark circle neutralization
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Harmonious Accents:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    {palette.jewelrySuggestions.metals.slice(0, 2).join(' & ')} hardware paired with Cognac and Espresso leathers
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Lips:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    {palette.makeupSuggestions.lipColors.join(' • ')}
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Blush:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    {palette.makeupSuggestions.blushTones.join(' • ')}
+                  </span>
+                </div>
+                <div>
+                  <strong className="text-[#292521] block text-[11px] uppercase tracking-wider">
+                    Eyeshadow:
+                  </strong>
+                  <span className="text-[#292521]/80">
+                    {palette.makeupSuggestions.eyeShades.join(' • ')}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

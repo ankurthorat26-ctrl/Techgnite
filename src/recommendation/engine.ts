@@ -141,6 +141,29 @@ export function evaluateProductMatch(
   product: Product, 
   quizAnswers: QuizAnswers
 ): MatchScoreResult {
+  const isGenderCompatible = checkGenderCompatibility(
+    product.gender, 
+    quizAnswers.genderPreference
+  );
+
+  // If gender preference is specified and product does not match, return minimum score
+  if (!isGenderCompatible) {
+    return {
+      product,
+      score: 15,
+      breakdown: {
+        colorScore: 0,
+        styleScore: 0,
+        categoryScore: 0,
+        occasionScore: 0,
+        budgetScore: 0,
+      },
+      reasons: [
+        `Designed for ${product.gender === 'women' ? "women's" : "men's"} wardrobe archetypes.`,
+      ],
+    };
+  }
+
   const { score: colorScore, reason: colorReason } = calculateColorScore(
     product, 
     quizAnswers.undertone, 
@@ -176,6 +199,10 @@ export function evaluateProductMatch(
   );
 
   const reasons: string[] = [];
+  if (quizAnswers.genderPreference && quizAnswers.genderPreference !== 'all' && product.gender === quizAnswers.genderPreference) {
+    reasons.push(`Tailored directly for ${quizAnswers.genderPreference === 'men' ? "men's" : "women's"} styling.`);
+  }
+
   reasons.push(colorReason);
   
   if (matchedStyles.length > 0) {
@@ -211,7 +238,7 @@ export function getRecommendedProducts(
     filtered = filtered.filter(p => checkBudgetCompatibility(p.price, quizAnswers.budget));
   }
 
-  // Gender filtering
+  // Strict gender filtering
   if (quizAnswers.genderPreference && quizAnswers.genderPreference !== 'all') {
     filtered = filtered.filter(p => checkGenderCompatibility(p.gender, quizAnswers.genderPreference));
   }
@@ -219,8 +246,15 @@ export function getRecommendedProducts(
   // Calculate scores
   const scored = filtered.map(product => evaluateProductMatch(product, quizAnswers));
 
-  // Sort descending by match score
-  scored.sort((a, b) => b.score - a.score);
+  // Sort descending by match score, prioritizing direct gender match over unisex fallbacks
+  scored.sort((a, b) => {
+    if (quizAnswers.genderPreference && quizAnswers.genderPreference !== 'all') {
+      const aDirect = a.product.gender === quizAnswers.genderPreference ? 1 : 0;
+      const bDirect = b.product.gender === quizAnswers.genderPreference ? 1 : 0;
+      if (aDirect !== bDirect) return bDirect - aDirect;
+    }
+    return b.score - a.score;
+  });
 
   return scored;
 }

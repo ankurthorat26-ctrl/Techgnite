@@ -32,7 +32,18 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({ outfit }) => {
       <div className="p-6 md:p-8 bg-gradient-to-b from-[#F7F0E8]/60 to-transparent border-b border-[#292521]/5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              {outfit.gender && (
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                  outfit.gender === 'men'
+                    ? 'bg-[#292521] text-[#D9B98C] border border-[#D9B98C]/30'
+                    : outfit.gender === 'women'
+                    ? 'bg-[#7A263A] text-white'
+                    : 'bg-[#D9B98C]/30 text-[#292521] border border-[#D9B98C]/50'
+                }`}>
+                  {outfit.gender === 'men' ? "Men's Edit" : outfit.gender === 'women' ? "Women's Edit" : "Unisex"}
+                </span>
+              )}
               <span className="px-2.5 py-0.5 rounded-full bg-[#7A263A]/10 text-[#7A263A] text-[10px] font-bold uppercase tracking-wider">
                 {outfit.occasion.replace('_', ' ')}
               </span>
@@ -117,7 +128,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({ outfit }) => {
 
               <div className="min-w-0 grow">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#7A263A] block truncate">
-                  {item.brand} • {item.category}
+                  {item.brand} • {item.category} {item.gender && item.gender !== 'unisex' ? `• ${item.gender === 'men' ? "Men's" : "Women's"}` : ''}
                 </span>
                 <Link
                   to={`/product/${item.id}`}

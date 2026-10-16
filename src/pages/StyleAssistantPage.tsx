@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useProfile } from '../context/ProfileContext';
 import { generateOutfits, StyleAssistantQuery } from '../recommendation/outfitEngine';
 import { OutfitCard } from '../components/outfits/OutfitCard';
@@ -20,16 +20,51 @@ export const StyleAssistantPage: React.FC = () => {
   const [budget, setBudget] = useState<BudgetRange>(quizAnswers?.budget || 'all');
   const [favoriteColorTone, setFavoriteColorTone] = useState<string>('Warm Earth & Terracotta');
 
-  const [query, setQuery] = useState<StyleAssistantQuery>({
-    gender,
-    occasion,
-    style,
-    budget,
-    favoriteColorTone,
-  });
-
   const [isGenerating, setIsGenerating] = useState(false);
-  const [outfits, setOutfits] = useState(() => generateOutfits(query));
+  const [outfits, setOutfits] = useState(() => generateOutfits({
+    gender: quizAnswers?.genderPreference || 'women',
+    occasion: quizAnswers?.occasions?.[0] || 'college',
+    style: quizAnswers?.personalStyles?.[0] || 'casual',
+    budget: quizAnswers?.budget || 'all',
+    favoriteColorTone: 'Warm Earth & Terracotta',
+  }));
+
+  // Sync state if user's saved quiz profile updates
+  useEffect(() => {
+    if (quizAnswers) {
+      const activeGender = quizAnswers.genderPreference || 'women';
+      const activeOccasion = quizAnswers.occasions?.[0] || 'college';
+      const activeStyle = quizAnswers.personalStyles?.[0] || 'casual';
+      const activeBudget = quizAnswers.budget || 'all';
+
+      setGender(activeGender);
+      setOccasion(activeOccasion);
+      setStyle(activeStyle);
+      setBudget(activeBudget);
+
+      const updated: StyleAssistantQuery = {
+        gender: activeGender,
+        occasion: activeOccasion,
+        style: activeStyle,
+        budget: activeBudget,
+        favoriteColorTone,
+      };
+      setOutfits(generateOutfits(updated));
+    }
+  }, [quizAnswers, favoriteColorTone]);
+
+  // Immediate switch when user selects a different gender archetype
+  const handleGenderSelect = (newGender: GenderPreference) => {
+    setGender(newGender);
+    const updatedQuery: StyleAssistantQuery = {
+      gender: newGender,
+      occasion,
+      style,
+      budget,
+      favoriteColorTone,
+    };
+    setOutfits(generateOutfits(updatedQuery));
+  };
 
   const handleGenerate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +77,6 @@ export const StyleAssistantPage: React.FC = () => {
       budget,
       favoriteColorTone,
     };
-    setQuery(updatedQuery);
 
     setTimeout(() => {
       setOutfits(generateOutfits(updatedQuery));
@@ -111,7 +145,7 @@ export const StyleAssistantPage: React.FC = () => {
                 <button
                   key={g.value}
                   type="button"
-                  onClick={() => setGender(g.value)}
+                  onClick={() => handleGenderSelect(g.value)}
                   className={`p-3 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-[#7A263A] text-white border-[#7A263A] shadow-xs'
